@@ -141,6 +141,19 @@ function createApplication(app_name, path) {
       complete();
     });
 
+      //Add config
+      mkdir(path + '/config', function(){
+            copy_template('config/index.js', path + '/config/index.js');
+            copy_template('config/development.js', path + '/config/development.js');
+            copy_template('config/test.js', path + '/config/test.js');
+            copy_template('config/production.js', path + '/config/production.js');
+            copy_template('config/log_config.js', path + '/config/log_config.js');
+      })
+
+      mkdir(path + '/utils', function(){
+        copy_template('utils/log_util.js', path + '/utils/log_util.js');
+      })
+
     mkdir(path + '/views', function(){
       switch (program.template) {
         case 'ejs':
@@ -195,10 +208,10 @@ function createApplication(app_name, path) {
       , version: '0.1.0'
       , private: true
       , "scripts": {
-        "start": "node bin/www",
-        "dev": "./node_modules/.bin/nodemon bin/www",
+        "start": "NODE_ENV=production node bin/www",
+        "dev": "NODE_ENV=development ./node_modules/.bin/nodemon bin/www",
         "prd": "pm2 start bin/www",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "NODE_ENV=test echo \"Error: no test specified\" && exit 1"
       }
       , "dependencies": {
         "debug": "^2.6.3",
@@ -210,7 +223,8 @@ function createApplication(app_name, path) {
         "koa-onerror": "^1.2.1",
         "koa-router": "^7.1.1",
         "koa-static": "^3.0.0",
-        "koa-views": "^5.2.1"
+        "koa-views": "^5.2.1",
+        "log4js": "^1.1.1"
       }
       , "devDependencies": {
         "nodemon": "^1.8.1"
@@ -274,6 +288,8 @@ function createApplication(app_name, path) {
     if (program.git) {
       write(path + '/.gitignore', fs.readFileSync(__dirname + '/../templates2/js/gitignore', 'utf-8'));
     }
+
+
 
     complete();
   });
